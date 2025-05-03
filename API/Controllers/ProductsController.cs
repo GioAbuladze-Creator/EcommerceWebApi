@@ -6,11 +6,11 @@ using Ecommerce.Shared.Commands;
 namespace Ecommerce.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private IProductsService _productsService;
-        public ProductsController(IProductsService productsService)
+        private readonly IProductsService _productsService;
+        public ProductsController(IProductsService productsService, ICategoriesService categoriesService)
         {
             _productsService = productsService;
         }
@@ -47,6 +47,5 @@ namespace Ecommerce.Api.Controllers
             await _productsService.UpdateProductAsync(productDto);
             return Ok(id);
         }
-
     }
 }
