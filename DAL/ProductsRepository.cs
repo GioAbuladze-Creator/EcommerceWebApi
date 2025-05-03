@@ -1,0 +1,95 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Ecommerce.DAL.Infrastructure;
+using Ecommerce.Shared.Abstractions;
+using Ecommerce.Shared.Commands;
+using Ecommerce.Shared.Models;
+
+namespace Ecommerce.DAL
+{
+    public class ProductsRepository : IProductsRepository
+    {
+        private readonly ProductsDbContext _context;
+        public ProductsRepository(ProductsDbContext productsDbContext)
+        {
+            _context = productsDbContext;
+        }
+        public async Task<List<ProductFullInfo>> GetProductsAsync()
+        {
+            var products = await _context.Products
+                .ToListAsync();
+            return products.Select(MapToProductFullInfo).ToList();
+        }
+        public async Task<ProductFullInfo> GetProductAsync(int productId)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product is null)
+            {
+                throw new KeyNotFoundException($"Product with Id {productId} not found.");
+            }
+            return MapToProductFullInfo(product);
+        }
+        public async Task<int> CreateProductAsync(CreateProductCommandDto productDto)
+        {
+            var finalProduct = new Product()
+            {
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                Stock = productDto.Stock,
+            };
+            await _context.Products.AddAsync(finalProduct);
+            await _context.SaveChangesAsync();
+            return finalProduct.Id;
+        }
+        public async Task DeleteProductAsync(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product is null)
+            {
+                throw new KeyNotFoundException($"Product with Id {id} not found.");
+            }
+            _context.ProductCategories.RemoveRange(product.ProductCategories);
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+        }
+        public async Task UpdateProductAsync(UpdateProductCommandDto productDto)
+        {
+            var product = await _context.Products.FindAsync(productDto.Id);
+            if (product is null)
+            {
+                throw new KeyNotFoundException($"Product with Id {productDto.Id} not found.");
+            }
+            if (!string.IsNullOrWhiteSpace(productDto.Name))
+            {
+                product.Name = productDto.Name;
+            }
+            if (!string.IsNullOrWhiteSpace(productDto.Description))
+            {
+                product.Description = productDto.Description;
+            }
+            if (!string.IsNullOrWhiteSpace(productDto.Price))
+            {
+                product.Price = productDto.Price;
+            }
+            if (productDto.Stock is not null)
+            {
+                product.Stock = productDto.Stock.Value;
+            }
+            await _context.SaveChangesAsync();
+        }
+        private ProductFullInfo MapToProductFullInfo(Product product)
+        {
+            return new ProductFullInfo()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Stock = product.Stock,
+                Price = product.Price,
+                ImageUrl = product.ImageUrl,
+                ProductCategories = (product.ProductCategories ?? new List<ProductCategory>())
+                    .ToDictionary(pc => pc.CategoryId, pc => pc.Category.Name)
+            };
+        }
+    }
+}
