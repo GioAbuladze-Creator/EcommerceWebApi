@@ -20,8 +20,7 @@ namespace Ecommerce.Api.Controllers
             var products = await _productsService.GetProductsAsync();
             return Ok(products);
         }
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
             var product = await _productsService.GetProductAsync(id);
@@ -33,8 +32,7 @@ namespace Ecommerce.Api.Controllers
             var productId = await _productsService.CreateProductAsync(product);
             return Ok(productId);
         }
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             await _productsService.DeleteProductAsync(id);
