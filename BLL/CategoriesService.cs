@@ -26,6 +26,10 @@ namespace Ecommerce.BLL
         }
         public async Task<int> CreateCategoryAsync(CreateCategoryCommandDto categoryDto)
         {
+            var categoryCheck = await _categoriesRepository.GetCategoryByNameAsync(categoryDto.Name);
+            if (categoryCheck is not null){
+                throw new InvalidOperationException($"Category with the name '{categoryDto.Name}' already exists with id '{categoryCheck.Id}'.");
+            }
             return await _categoriesRepository.CreateCategoryAsync(categoryDto);
         }
         public async Task DeleteCategoryAsync(int id)
@@ -34,6 +38,11 @@ namespace Ecommerce.BLL
         }
         public async Task UpdateCategoryAsync(UpdateCategoryCommandDto categoryDto)
         {
+            var categoryCheck = await _categoriesRepository.GetCategoryByNameAsync(categoryDto.Name);
+            if (categoryCheck is not null)
+            {
+                throw new InvalidOperationException($"Category with the name '{categoryDto.Name}' already exists with id '{categoryCheck.Id}'.");
+            }
             await _categoriesRepository.UpdateCategoryAsync(categoryDto);
         }
     }

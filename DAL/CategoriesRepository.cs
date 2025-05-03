@@ -64,6 +64,12 @@ namespace Ecommerce.DAL
             }
             await _context.SaveChangesAsync();
         }
+        public async Task<Category?> GetCategoryByNameAsync(string name)
+        {
+            var category = await _context.Categories
+                   .FirstOrDefaultAsync(c => c.Name.ToLower() == name.ToLower());
+            return category;
+        }
         private CategoryFullInfo MapToCategoryFullInfo(Category category)
         {
             return new CategoryFullInfo()

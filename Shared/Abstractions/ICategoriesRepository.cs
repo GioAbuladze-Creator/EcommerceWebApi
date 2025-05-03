@@ -10,5 +10,6 @@ namespace Ecommerce.Shared.Abstractions
         Task<int> CreateCategoryAsync(CreateCategoryCommandDto categoryDto);
         Task DeleteCategoryAsync(int id);
         Task UpdateCategoryAsync(UpdateCategoryCommandDto categoryDto);
+        Task<Category?> GetCategoryByNameAsync(string name);
     }
 }

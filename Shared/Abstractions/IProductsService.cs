@@ -10,6 +10,5 @@ namespace Ecommerce.Shared.Abstractions
         Task<int> CreateProductAsync(CreateProductCommandDto product);
         Task DeleteProductAsync(int productId);
         Task UpdateProductAsync(UpdateProductCommandDto productDto);
-
     }
 }
