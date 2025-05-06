@@ -1,11 +1,20 @@
+using Ecommerce.Api.Extensions;
 using Ecommerce.API.Extensions;
+using Ecommerce.DAL.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
-builder.Services.AddAppServices(builder.Configuration);
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddDbContext<ProductsDbContext>(
+                o => o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerDocumentation();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
