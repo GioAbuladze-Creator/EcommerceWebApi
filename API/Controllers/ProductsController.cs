@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Ecommerce.Shared.Abstractions;
 using Ecommerce.Shared.Commands;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ecommerce.Api.Controllers
 {
@@ -27,18 +28,21 @@ namespace Ecommerce.Api.Controllers
             return Ok(product);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct(CreateProductCommandDto product)
         {
             var productId = await _productsService.CreateProductAsync(product);
             return Ok(productId);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             await _productsService.DeleteProductAsync(id);
             return Ok(id);
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(int id, UpdateProductCommandDto productDto)
         {
             productDto.Id = id;

@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Shared.Abstractions;
 using Ecommerce.Shared.Commands;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,18 +28,21 @@ namespace Ecommerce.Api.Controllers
             return Ok(category);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCategory(CreateCategoryCommandDto categoryDto)
         {
             var categoryId = await _categoriesService.CreateCategoryAsync(categoryDto);
             return Ok(categoryId);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             await _categoriesService.DeleteCategoryAsync(id);
             return Ok(id);
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCategory(int id, UpdateCategoryCommandDto categoryDto)
         {
             categoryDto.Id = id;
