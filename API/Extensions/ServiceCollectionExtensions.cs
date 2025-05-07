@@ -14,6 +14,8 @@ namespace Ecommerce.API.Extensions
             services.AddScoped<ICategoriesService, CategoriesService>();
             services.AddScoped<ICategoriesRepository, CategoriesRepository>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ICartsService,CartsService>();
+            services.AddScoped<ICartsRepository,CartsRepository>();
 
             return services;
         }
