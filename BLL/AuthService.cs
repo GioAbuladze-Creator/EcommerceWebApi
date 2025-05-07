@@ -43,7 +43,8 @@ namespace Ecommerce.BLL
             {
                 Email = request.Email,
                 Password = request.Password,
-                Role = UserRole.Customer
+                Role = UserRole.Customer,
+                Cart = new Cart()
             };
 
             _context.Users.Add(user);
@@ -79,5 +80,5 @@ namespace Ecommerce.BLL
             };
         }
     }
-    
+
 }

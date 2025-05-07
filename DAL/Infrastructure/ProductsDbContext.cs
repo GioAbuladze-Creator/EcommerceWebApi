@@ -14,6 +14,8 @@ namespace Ecommerce.DAL.Infrastructure
         public DbSet<Category> Categories { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,6 +40,24 @@ namespace Ecommerce.DAL.Infrastructure
             modelBuilder.Entity<User>()
                 .Property(u => u.Role)
                 .HasConversion<string>();
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Cart)
+                .WithOne()
+                .HasForeignKey<Cart>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Cart>()
+                .HasMany(c => c.CartItems)
+                .WithOne()
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<CartItem>()
+                .Property(ci => ci.Quantity)
+                .IsRequired();
+            modelBuilder.Entity<CartItem>()
+                .HasOne(c=>c.Product)
+                .WithMany()
+                .HasForeignKey(ci=>ci.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
