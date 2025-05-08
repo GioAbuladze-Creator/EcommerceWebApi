@@ -42,8 +42,11 @@ namespace Ecommerce.BLL
         public async Task UpdateToCartAsync(CartItem cartItem, int quantity)
         {
             QuantityCheck(quantity, cartItem.Product.Stock);
-
             await _cartsRepository.UpdateToCartAsync(cartItem, quantity);
+        }
+        public async Task RemoveItemFromCartAsync(int cartItemId)
+        {
+            await _cartsRepository.RemoveItemFromCartAsync(cartItemId);
         }
         public void QuantityCheck(int quantity, int stock)
         {
@@ -55,6 +58,10 @@ namespace Ecommerce.BLL
             {
                 throw new InvalidOperationException($"Requested quantity ({quantity}) exceeds available stock ({stock}).");
             }
+        }
+        public async Task ClearCartAsync(Cart cart)
+        {
+            await _cartsRepository.ClearCartAsync(cart);
         }
         public CartItem? GetCartItem(int productId, Cart cart)
         {

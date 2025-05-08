@@ -70,6 +70,21 @@ namespace Ecommerce.DAL
             cartItem.Quantity = quantity;
             await _context.SaveChangesAsync();
         }
+        public async Task RemoveItemFromCartAsync(int cartItemId)
+        {
+            var cartItem = await _context.CartItems.FindAsync(cartItemId);
+            if (cartItem is null)
+            {
+                throw new KeyNotFoundException($"Cart Item with Id {cartItemId} not found.");
+            }
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+        }
+        public async Task ClearCartAsync(Cart cart)
+        {
+            cart.CartItems.Clear();
+            await _context.SaveChangesAsync();
+        }
         public CartItem? GetCartItem(int productId, Cart cart)
         {
             var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);

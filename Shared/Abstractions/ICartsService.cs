@@ -14,6 +14,8 @@ namespace Ecommerce.Shared.Abstractions
         Task<CartDto> GetCartFullInfoAsync(int userId);
         Task<int> AddToCartAsync(Product product, Cart cart, AddToCartCommandDto item);
         Task UpdateToCartAsync(CartItem cartItem, int quantity);
+        Task RemoveItemFromCartAsync(int cartItemId);
+        Task ClearCartAsync(Cart cart);
         CartItem? GetCartItem(int productId, Cart cart);
     }
 }

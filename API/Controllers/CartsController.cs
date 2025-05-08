@@ -40,7 +40,7 @@ namespace Ecommerce.Api.Controllers
 
             return Ok(cartItemId);
         }
-        [HttpPut("update{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateToCart(int id, int quantity)
         {
             var userId = GetUserId();
@@ -48,12 +48,26 @@ namespace Ecommerce.Api.Controllers
             var cartItem = _cartsService.GetCartItem(id, cart);
             if (cartItem == null)
             {
-
                 throw new KeyNotFoundException($"Product with Id {id} is not in the Cart.");
             }
             await _cartsService.UpdateToCartAsync(cartItem, quantity);
             return Ok(cartItem.CartItemId);
         }
+        [HttpDelete("{cartItemId}")]
+        public async Task<IActionResult> RemoveItemFromCart(int cartItemId)
+        {
+            await _cartsService.RemoveItemFromCartAsync(cartItemId);
+            return Ok(cartItemId);
+        }
+        [HttpDelete("clear")]
+        public async Task<IActionResult> ClearCart()
+        {
+            var userId = GetUserId();
+            var cart = await _cartsService.GetCartAsync(userId);
+            await _cartsService.ClearCartAsync(cart);
+            return Ok(cart.CartId);
+        }
+
         private int GetUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
