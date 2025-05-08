@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Shared.Models
 {
-    public class CartItemFullInfo
+    public class CartItemDto
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; }

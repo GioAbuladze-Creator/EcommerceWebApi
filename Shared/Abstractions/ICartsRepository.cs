@@ -11,7 +11,9 @@ namespace Ecommerce.Shared.Abstractions
     public interface ICartsRepository
     {
         Task<Cart> GetCartAsync(int userId);
-        Task<CartFullInfo> GetCartFullInfoAsync(int userId);
-        Task<int> AddToCartAsync(Cart cart, AddToCartCommandDto item);
+        Task<CartDto> GetCartFullInfoAsync(int userId);
+        Task<int> AddToCartAsync(Product product, Cart cart, AddToCartCommandDto item);
+        Task UpdateToCartAsync(CartItem cartItem, int quantity);
+        CartItem GetCartItem(int productId, Cart cart);
     }
 }

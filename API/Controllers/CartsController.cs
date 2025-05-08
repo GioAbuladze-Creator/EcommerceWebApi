@@ -1,7 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Ecommerce.BLL;
 using Ecommerce.Shared.Abstractions;
 using Ecommerce.Shared.Commands;
+using Ecommerce.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,16 +13,18 @@ namespace Ecommerce.Api.Controllers
     [ApiController]
     public class CartsController : ControllerBase
     {
+        private readonly IProductsService _productsService;
         private readonly ICartsService _cartsService;
-        public CartsController(ICartsService cartsService)
+        public CartsController(IProductsService productsService, ICartsService cartsService)
         {
+            _productsService = productsService;
             _cartsService = cartsService;
         }
         [HttpGet]
         public async Task<IActionResult> GetCart()
         {
             var userId = GetUserId();
-           
+
             var cart = await _cartsService.GetCartFullInfoAsync(userId);
 
             return Ok(cart);
@@ -31,9 +35,24 @@ namespace Ecommerce.Api.Controllers
             var userId = GetUserId();
 
             var cart = await _cartsService.GetCartAsync(userId);
+            var product = await _productsService.GetProductAsync(item.ProductId);
+            int cartItemId = await _cartsService.AddToCartAsync(product, cart, item);
 
-            int itemId = await _cartsService.AddToCartAsync(cart,item);
-            return Ok(itemId);
+            return Ok(cartItemId);
+        }
+        [HttpPut("update{id}")]
+        public async Task<IActionResult> UpdateToCart(int id, int quantity)
+        {
+            var userId = GetUserId();
+            var cart = await _cartsService.GetCartAsync(userId);
+            var cartItem = _cartsService.GetCartItem(id, cart);
+            if (cartItem == null)
+            {
+
+                throw new KeyNotFoundException($"Product with Id {id} is not in the Cart.");
+            }
+            await _cartsService.UpdateToCartAsync(cartItem, quantity);
+            return Ok(cartItem.CartItemId);
         }
         private int GetUserId()
         {

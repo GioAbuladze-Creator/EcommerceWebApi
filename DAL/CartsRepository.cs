@@ -29,7 +29,7 @@ namespace Ecommerce.DAL
             }
             return cart;
         }
-        public async Task<CartFullInfo> GetCartFullInfoAsync(int userId)
+        public async Task<CartDto> GetCartFullInfoAsync(int userId)
         {
             var cart = await _context.Carts
                 .FirstOrDefaultAsync(c => c.UserId == userId);
@@ -37,57 +37,45 @@ namespace Ecommerce.DAL
             {
                 cart = new Cart();
             }
-            return new CartFullInfo()
+            return new CartDto()
             {
                 CartId = cart.CartId,
                 UserId = userId,
                 CreatedAt = cart.CreatedAt,
-                CartItems = cart.CartItems.ToDictionary(ci => ci.CartItemId, ci => new CartItemFullInfo()
+                CartItems = cart.CartItems.ToDictionary(ci => ci.CartItemId, ci => new CartItemDto()
                 {
                     ProductId = ci.ProductId,
                     Price = ci.Product.Price,
                     ProductName = ci.Product.Name,
                     Quantity = ci.Quantity,
-                    Total=ci.Quantity*float.Parse(ci.Product.Price)
+                    Total = ci.Quantity * float.Parse(ci.Product.Price)
                 })
             };
-
         }
-        public async Task<int> AddToCartAsync(Cart cart, AddToCartCommandDto item)
+        public async Task<int> AddToCartAsync(Product product, Cart cart, AddToCartCommandDto item)
         {
-            var product = await _context.Products.FindAsync(item.ProductId);
-            if (product is null)
+            var cartItem = new CartItem
             {
-                throw new KeyNotFoundException($"Product with Id {item.ProductId} not found.");
-            }
-            // biznes biznes!!!!!!!!!!
-            if (product.Stock < item.Quantity)
-            {
-                throw new InvalidOperationException($"Requested quantity ({item.Quantity}) exceeds available stock ({product.Stock}).");
-            }
-            var productCheck = cart.CartItems.FirstOrDefault(ci => ci.ProductId == item.ProductId);
+                CartId = cart.CartId,
+                Product = product,
+                Quantity = item.Quantity
+            };
+            await _context.AddAsync(cartItem);
+            await _context.SaveChangesAsync();
 
-            if (productCheck is not null)
-            {
-                productCheck.Quantity += item.Quantity;
-                await _context.SaveChangesAsync();
-                return productCheck.CartItemId;
-            }
-            else
-            {
-                var cartItem = new CartItem
-                {
-                    CartId = cart.CartId,
-                    Product = product,
-                    Quantity = item.Quantity
-                };
-                await _context.AddAsync(cartItem);
-                await _context.SaveChangesAsync();
-
-                return cartItem.CartItemId;
-            }
+            return cartItem.CartItemId;
+        }
+        public async Task UpdateToCartAsync(CartItem cartItem, int quantity)
+        {
+            cartItem.Quantity = quantity;
+            await _context.SaveChangesAsync();
+        }
+        public CartItem? GetCartItem(int productId, Cart cart)
+        {
+            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+            return cartItem;
         }
     }
 
-    
+
 }

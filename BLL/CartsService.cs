@@ -21,17 +21,44 @@ namespace Ecommerce.BLL
             var cart = await _cartsRepository.GetCartAsync(userId);
             return cart;
         }
-        public async Task<CartFullInfo> GetCartFullInfoAsync(int userId)
+        public async Task<CartDto> GetCartFullInfoAsync(int userId)
         {
             var cart = await _cartsRepository.GetCartFullInfoAsync(userId);
             return cart;
         }
 
-        public async Task<int> AddToCartAsync(Cart cart, AddToCartCommandDto item)
+        public async Task<int> AddToCartAsync(Product product, Cart cart, AddToCartCommandDto item)
         {
-            return await _cartsRepository.AddToCartAsync(cart, item);
+            var productCheck = _cartsRepository.GetCartItem(product.Id, cart);
+            if (productCheck is not null)
+            {
+                QuantityCheck(productCheck.Quantity + item.Quantity, product.Stock);
+                await _cartsRepository.UpdateToCartAsync(productCheck, productCheck.Quantity + item.Quantity);
+                return productCheck.CartItemId;
+            }
+            QuantityCheck(item.Quantity, product.Stock);
+            return await _cartsRepository.AddToCartAsync(product, cart, item);
         }
+        public async Task UpdateToCartAsync(CartItem cartItem, int quantity)
+        {
+            QuantityCheck(quantity, cartItem.Product.Stock);
 
-
+            await _cartsRepository.UpdateToCartAsync(cartItem, quantity);
+        }
+        public void QuantityCheck(int quantity, int stock)
+        {
+            if (quantity <= 0)
+            {
+                throw new InvalidOperationException($"Requested quantity ({quantity}) is less than 1.");
+            }
+            if (stock < quantity)
+            {
+                throw new InvalidOperationException($"Requested quantity ({quantity}) exceeds available stock ({stock}).");
+            }
+        }
+        public CartItem? GetCartItem(int productId, Cart cart)
+        {
+            return _cartsRepository.GetCartItem(productId, cart);
+        }
     }
 }

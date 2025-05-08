@@ -24,7 +24,7 @@ namespace Ecommerce.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
-            var product = await _productsService.GetProductAsync(id);
+            var product = await _productsService.GetProductDtoAsync(id);
             return Ok(product);
         }
         [HttpPost]

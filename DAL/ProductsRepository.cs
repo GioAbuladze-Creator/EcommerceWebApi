@@ -13,20 +13,29 @@ namespace Ecommerce.DAL
         {
             _context = productsDbContext;
         }
-        public async Task<List<ProductFullInfo>> GetProductsAsync()
+        public async Task<List<ProductDto>> GetProductsAsync()
         {
             var products = await _context.Products
                 .ToListAsync();
-            return products.Select(MapToProductFullInfo).ToList();
+            return products.Select(MapToProductDto).ToList();
         }
-        public async Task<ProductFullInfo> GetProductAsync(int productId)
+        public async Task<Product> GetProductAsync(int productId)
         {
             var product = await _context.Products.FindAsync(productId);
             if (product is null)
             {
                 throw new KeyNotFoundException($"Product with Id {productId} not found.");
             }
-            return MapToProductFullInfo(product);
+            return product;
+        }
+        public async Task<ProductDto> GetProductDtoAsync(int productId)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product is null)
+            {
+                throw new KeyNotFoundException($"Product with Id {productId} not found.");
+            }
+            return MapToProductDto(product);
         }
         public async Task<int> CreateProductAsync(CreateProductCommandDto productDto)
         {
@@ -77,9 +86,9 @@ namespace Ecommerce.DAL
             }
             await _context.SaveChangesAsync();
         }
-        private ProductFullInfo MapToProductFullInfo(Product product)
+        private ProductDto MapToProductDto(Product product)
         {
-            return new ProductFullInfo()
+            return new ProductDto()
             {
                 Id = product.Id,
                 Name = product.Name,

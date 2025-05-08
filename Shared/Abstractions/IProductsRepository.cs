@@ -5,8 +5,9 @@ namespace Ecommerce.Shared.Abstractions
 {
     public interface IProductsRepository
     {
-        Task<List<ProductFullInfo>> GetProductsAsync();
-        Task<ProductFullInfo> GetProductAsync(int productId);
+        Task<List<ProductDto>> GetProductsAsync();
+        Task<Product> GetProductAsync(int productId);
+        Task<ProductDto> GetProductDtoAsync(int productId);
         Task<int> CreateProductAsync(CreateProductCommandDto productDto);
         Task DeleteProductAsync(int id);
         Task UpdateProductAsync(UpdateProductCommandDto productDto);

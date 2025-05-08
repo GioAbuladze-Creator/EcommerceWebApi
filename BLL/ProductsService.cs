@@ -11,14 +11,19 @@ namespace Ecommerce.BLL
         {
             _productsRepository = productsRepository;
         }
-        public async Task<List<ProductFullInfo>> GetProductsAsync()
+        public async Task<List<ProductDto>> GetProductsAsync()
         {
             var products = await _productsRepository.GetProductsAsync();
             return products;
         }
-        public async Task<ProductFullInfo> GetProductAsync(int productId)
+        public async Task<Product> GetProductAsync(int productId)
         {
             var product = await _productsRepository.GetProductAsync(productId);
+            return product;
+        }
+        public async Task<ProductDto> GetProductDtoAsync(int productId)
+        {
+            var product = await _productsRepository.GetProductDtoAsync(productId);
             return product;
         }
         public async Task<int> CreateProductAsync(CreateProductCommandDto product)
