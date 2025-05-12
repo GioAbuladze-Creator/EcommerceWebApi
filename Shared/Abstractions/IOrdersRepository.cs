@@ -12,6 +12,7 @@ namespace Ecommerce.Shared.Abstractions
     {
         Task<List<Order>> GetUserOrdersAsync(int userId);
         Task<List<OrderDto>> GetUserOrdersDtoAsync(int userId);
+        Task<List<OrderDto>> GetAllUsersOrdersDtoAsync();
         Task AddOrderFromCartAsync(Cart cart);
     }
 }

@@ -78,6 +78,9 @@ namespace Ecommerce.DAL.Infrastructure
             modelBuilder.Entity<OrderItem>()
                 .Property(oi => oi.Quantity)
                 .IsRequired();
+            modelBuilder.Entity<Order>()
+                .Property(u => u.Status)
+                .HasConversion<string>();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

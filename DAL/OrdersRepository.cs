@@ -28,23 +28,14 @@ namespace Ecommerce.DAL
             var orders = await _context.Orders
                 .Where(o => o.UserId == userId)
                 .ToListAsync();
-            var orderDtos = orders.Select(o => new OrderDto
-            {
-                OrderId = o.OrderId,
-                UserId=o.UserId,
-                Status = o.Status,
-                TotalAmount=o.TotalAmount,
-                CreatedAt=o.CreatedAt,
-                OrderItems = o.OrderItems.Select(oi => new OrderItemDto
-                {
-                    OrderId=o.OrderId,
-                    OrderItemId = oi.OrderItemId,
-                    Quantity = oi.Quantity,
-                    ProductId=oi.ProductId,
-                    Product = oi.Product.ToDto()
-                }).ToList()
-            }).ToList();
+            var orderDtos = MapToOrdersDtos(orders);
 
+            return orderDtos;
+        }
+        public async Task<List<OrderDto>> GetAllUsersOrdersDtoAsync()
+        {
+            var orders = await _context.Orders.ToListAsync();
+            var orderDtos = MapToOrdersDtos(orders);
             return orderDtos;
         }
         public async Task AddOrderFromCartAsync(Cart cart)
@@ -74,6 +65,26 @@ namespace Ecommerce.DAL
                 Quantity = cartItem.Quantity,
                 Product = cartItem.Product,
             };
+        }
+        private List<OrderDto> MapToOrdersDtos(List<Order> orders)
+        {
+            var orderDtos = orders.Select(o => new OrderDto
+            {
+                OrderId = o.OrderId,
+                UserId = o.UserId,
+                Status = o.Status,
+                TotalAmount = o.TotalAmount,
+                CreatedAt = o.CreatedAt,
+                OrderItems = o.OrderItems.Select(oi => new OrderItemDto
+                {
+                    OrderId = o.OrderId,
+                    OrderItemId = oi.OrderItemId,
+                    Quantity = oi.Quantity,
+                    ProductId = oi.ProductId,
+                    Product = oi.Product.ToDto()
+                }).ToList()
+            }).ToList();
+            return orderDtos;
         }
     }
 }

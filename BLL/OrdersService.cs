@@ -25,6 +25,10 @@ namespace Ecommerce.BLL
         {
             return await _ordersRepository.GetUserOrdersDtoAsync(userId);
         }
+        public async Task<List<OrderDto>> GetAllUsersOrdersDtoAsync()
+        {
+            return await _ordersRepository.GetAllUsersOrdersDtoAsync();
+        }
         public async Task AddOrderFromCartAsync(Cart cart)
         {
             for (int i = 0; i < cart.CartItems.Count; i++)
@@ -36,7 +40,5 @@ namespace Ecommerce.BLL
             }
             await _ordersRepository.AddOrderFromCartAsync(cart);
         }
-
-
     }
 }
