@@ -16,6 +16,9 @@ namespace Ecommerce.API.Extensions
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICartsService,CartsService>();
             services.AddScoped<ICartsRepository,CartsRepository>();
+            services.AddScoped<IOrdersService,OrdersService>();
+            services.AddScoped<IOrdersRepository, OrdersRepository>();
+
 
             return services;
         }

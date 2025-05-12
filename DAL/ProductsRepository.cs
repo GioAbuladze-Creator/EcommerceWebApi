@@ -3,6 +3,7 @@ using Ecommerce.DAL.Infrastructure;
 using Ecommerce.Shared.Abstractions;
 using Ecommerce.Shared.Commands;
 using Ecommerce.Shared.Models;
+using Ecommerce.DAL.Extensions;
 
 namespace Ecommerce.DAL
 {
@@ -17,7 +18,7 @@ namespace Ecommerce.DAL
         {
             var products = await _context.Products
                 .ToListAsync();
-            return products.Select(MapToProductDto).ToList();
+            return products.Select(p=>p.ToDto()).ToList();
         }
         public async Task<Product> GetProductAsync(int productId)
         {
@@ -35,7 +36,7 @@ namespace Ecommerce.DAL
             {
                 throw new KeyNotFoundException($"Product with Id {productId} not found.");
             }
-            return MapToProductDto(product);
+            return product.ToDto();
         }
         public async Task<int> CreateProductAsync(CreateProductCommandDto productDto)
         {
@@ -85,20 +86,6 @@ namespace Ecommerce.DAL
                 product.Stock = productDto.Stock.Value;
             }
             await _context.SaveChangesAsync();
-        }
-        private ProductDto MapToProductDto(Product product)
-        {
-            return new ProductDto()
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Stock = product.Stock,
-                Price = product.Price,
-                ImageUrl = product.ImageUrl,
-                ProductCategories = (product.ProductCategories ?? new List<ProductCategory>())
-                    .ToDictionary(pc => pc.CategoryId, pc => pc.Category.Name)
-            };
         }
     }
 }

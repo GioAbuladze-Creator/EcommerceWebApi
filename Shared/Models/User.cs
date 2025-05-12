@@ -21,5 +21,6 @@ namespace Ecommerce.Shared.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public UserRole Role { get; set; }
         public virtual Cart Cart { get; set; }
+        public virtual List<Order>? Orders { get; set; }
     }
 }

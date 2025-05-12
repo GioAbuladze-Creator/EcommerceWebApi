@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Ecommerce.Api.Extensions;
 using Ecommerce.BLL;
 using Ecommerce.Shared.Abstractions;
 using Ecommerce.Shared.Commands;
@@ -23,7 +24,7 @@ namespace Ecommerce.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCart()
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId();
 
             var cart = await _cartsService.GetCartFullInfoAsync(userId);
 
@@ -32,7 +33,7 @@ namespace Ecommerce.Api.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddToCart(AddToCartCommandDto item)
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId();
 
             var cart = await _cartsService.GetCartAsync(userId);
             var product = await _productsService.GetProductAsync(item.ProductId);
@@ -43,7 +44,7 @@ namespace Ecommerce.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateToCart(int id, int quantity)
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId();
             var cart = await _cartsService.GetCartAsync(userId);
             var cartItem = _cartsService.GetCartItem(id, cart);
             if (cartItem == null)
@@ -62,22 +63,10 @@ namespace Ecommerce.Api.Controllers
         [HttpDelete("clear")]
         public async Task<IActionResult> ClearCart()
         {
-            var userId = GetUserId();
+            var userId = User.GetUserId();
             var cart = await _cartsService.GetCartAsync(userId);
             await _cartsService.ClearCartAsync(cart);
             return Ok(cart.CartId);
-        }
-
-        private int GetUserId()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null)
-            {
-                throw new UnauthorizedAccessException("User must be signed in to perform this action.");
-            }
-            var userId = int.Parse(userIdClaim.Value);
-            return userId;
         }
     }
 }
