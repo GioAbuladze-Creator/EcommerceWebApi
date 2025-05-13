@@ -18,6 +18,7 @@ A modern, cleanly structured **Ecommerce Web API** built with **ASP.NET Core**, 
 
     contains common data transfer objects (DTOs), request/response models, utility classes, and other types shared across all projects (like ProductDto, OrderDto, etc.).
 
+![image](https://github.com/user-attachments/assets/96ecefe8-880b-4788-8415-806ef8ea673a)
 
 
 ## Migration Strategy and Execution Plan
