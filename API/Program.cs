@@ -1,4 +1,5 @@
 using Ecommerce.Api.Extensions;
+using Ecommerce.Api.Middlewares;
 using Ecommerce.API.Extensions;
 using Ecommerce.DAL.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +25,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ErrorLoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();
