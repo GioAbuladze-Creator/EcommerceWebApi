@@ -45,6 +45,10 @@ namespace Ecommerce.Api.Controllers
         {
             var userId = User.GetUserId();
             var cart = await _cartService.GetCartAsync(userId);
+            if (cart.CartItems.Count == 0)
+            {
+                throw new Exception("Cart is empty!");
+            }
             await _ordersService.AddOrderFromCartAsync(cart);
             return Ok(userId);
         }
